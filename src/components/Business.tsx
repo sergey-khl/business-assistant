@@ -4,12 +4,7 @@ import React, { useState , FC } from 'react';
 import { Product } from './Product';
 import { Employee } from './Employee';
 import { Description } from './Description';
-const { Configuration, OpenAIApi } = require("openai");
-const got = require('got');
-const prompt = `this is a test`;
-  
-  
-
+import ReactMarkdown from 'react-markdown'
 
 type Prod = {
   id: number;
@@ -31,8 +26,13 @@ type Marketing = {
   promotionStrategyImplementationDescription: string;
 }
 
+type Bus = {
+  businessPlan: string;
+  pitch: string;
+}
 
 export const Business: FC = () => {
+  const [loading, setLoading] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
   const [industry, setIndustry] = useState<string>("");
   const [otherIndustry, setOtherIndustry] = useState<string>("");
@@ -50,6 +50,25 @@ export const Business: FC = () => {
   const [markId, setMarkId] = useState<number>(0);
   const [team, setTeam] = useState<Emp[]>([]);
   const [teamId, setTeamId] = useState<number>(0);
+  const [prompt, setPrompt] = useState<string>("");
+  const [businessPlan, setBusinessPLan] = useState<Bus>({businessPlan: "", pitch: ""});
+
+  // const prompt = `
+  //   Fill in [MASK] with the most probable option. Anything in () is a list of possible options for the value in that key value pair. Anything in <> is a type description for the value in that key value pair. 
+  //   Output the key value pairs then provide a unique Business Plan using all of the following key value pairs: 
+  //   {"companyName": ${(name ? name : "[MASK]")}, 
+  //   "industry": ${(industry === 'Other' ? otherIndustry : (industry ? industry : "[MASK]"))}(Arts & Entertainment, Automotive, Bar & Nightclub, Beauty/Hair Salon & Day Spa, Business Services, Construction & Engineering, Consulting, Consumer Services, Day Care Services & Children's Products, Education & Training, Farm & Food Production, Fashion/Décor, Finance/Insurance, Fitness & Sports, Hotel & Bed and Breakfast, Information Technology, Manufacturing, Medical & Health Care, Non Profit, Pet Services & Pet Supllies, Real Estate, Retail or Online Store, Restaurant, Cafe & Bakery, Transportation, Wedding & Event Planning, Wholesale & Distributor), 
+  //   "amountOfFunding": ${(funding ? funding : "[MASK]")}, 
+  //   "legalStructure": ${(structure ? structure : "[MASK]")}(C Corporation, S Corporation, Limited Liability Company), 
+  //   "description": ${(description ? description : "[MASK]")}, 
+  //   "whyChooseUs": ${(unique ? unique : "[MASK]")}, 
+  //   "numberOfCustomers": ${(numCustomers ? numCustomers : "[MASK]")}, 
+  //   "spendingOfCustomerPerYear": ${(spend ? spend : "[MASK]")}, 
+  //   "targetCustomers": ${(customer ? customer : "[MASK]")}, 
+  //   "products": [${(products.map(prod => (prod.productName ?  JSON.stringify(prod, replaceId) : "[MASK]")))}]<productName: string, priceOfProduct: number, descriptionOfProduct: string>, 
+  //   "marketing": [${(marketing.map(mark => (mark.promotionStrategyName ?  JSON.stringify(mark, replaceId) : "[MASK]")))}]<promotionStrategyName: string, promotionStrategyImplementationDescription: string>, 
+  //   "team": [${(team.map(mem => (mem.employeeName ?  JSON.stringify(mem, replaceId) : "[MASK]")))}]<employeeName: string, employeeTitleOrRole: string, employeeBackground: string>}
+  //   `;
 
   const handleInput = (setter: React.Dispatch<React.SetStateAction<string>>) => (e: React.ChangeEvent<HTMLInputElement>): void => {
     setter(e.target.value);
@@ -159,37 +178,13 @@ export const Business: FC = () => {
       return value
     }
   }
-  const configuration = new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
-  const openai = new OpenAIApi(configuration);
 
-  const response = async () => {
-    const url = 'https://api.openai.com/v1/engines/davinci/completions';
-    const params = {
-      "prompt": prompt,
-      "max_tokens": 5,
-      "temperature": 0.7,
-      "frequency_penalty": 0.5
-    };
-    const headers = {
-      'Authorization': `Bearer ${process.env.OPENAI_SECRET_KEY}`,
-    };
-  
-    try {
-      const response = await got.post(url, { json: params, headers: headers }).json();
-      const output = `${prompt}${response.choices[0].text}`;
-      console.log(output);
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const genBusinessPlan = (e: React.MouseEvent<HTMLButtonElement>) => {
+  async function sendPrompt(e: any) {
     e.preventDefault();
+    setLoading(true);
     const prompt = `
-    Fill in [MASK] with the most probable option. Anything in () is a list of possible options for the value in that key value pair. Anything in <> is a type description for the value in that key value pair. 
-    Output the key value pairs then provide a unique Business Plan using all of the following key value pairs: 
+    Generate key value pairs that will be used to create a unique business plan for a successful company. Fill in [MASK] with the most probable option. Anything in () is a list of possible options for the value in that key value pair. Anything in <> is a type description for the value in that key value pair. 
+    Fill in the following key value pairs if information is missing: 
     {"companyName": ${(name ? name : "[MASK]")}, 
     "industry": ${(industry === 'Other' ? otherIndustry : (industry ? industry : "[MASK]"))}(Arts & Entertainment, Automotive, Bar & Nightclub, Beauty/Hair Salon & Day Spa, Business Services, Construction & Engineering, Consulting, Consumer Services, Day Care Services & Children's Products, Education & Training, Farm & Food Production, Fashion/Décor, Finance/Insurance, Fitness & Sports, Hotel & Bed and Breakfast, Information Technology, Manufacturing, Medical & Health Care, Non Profit, Pet Services & Pet Supllies, Real Estate, Retail or Online Store, Restaurant, Cafe & Bakery, Transportation, Wedding & Event Planning, Wholesale & Distributor), 
     "amountOfFunding": ${(funding ? funding : "[MASK]")}, 
@@ -203,7 +198,29 @@ export const Business: FC = () => {
     "marketing": [${(marketing.map(mark => (mark.promotionStrategyName ?  JSON.stringify(mark, replaceId) : "[MASK]")))}]<promotionStrategyName: string, promotionStrategyImplementationDescription: string>, 
     "team": [${(team.map(mem => (mem.employeeName ?  JSON.stringify(mem, replaceId) : "[MASK]")))}]<employeeName: string, employeeTitleOrRole: string, employeeBackground: string>}
     `;
-    console.log(prompt);
+    setPrompt(prompt);
+    try {
+        const request = await fetch("http://localhost:5000/api/prompt", {
+            method: "POST",
+            body: JSON.stringify({
+                prompt,
+            }),
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+        });
+        const data = await request.json();
+        if (data.message) {
+            setLoading(false);
+            //👇🏻 update the state with the server response
+            setBusinessPLan(data.result);
+            
+        }
+    } catch (err) {
+        console.log('nope')
+        console.error(err);
+    }
   }
 
   return (
@@ -387,8 +404,21 @@ export const Business: FC = () => {
           <button type="button" className="btn btn-secondary" onClick={addEmp}>Add Member</button>
         </div>
         
-        <button type="submit" className="btn btn-primary" onClick={response}>Generate Business Plan!</button>
+        <button type="submit" className="btn btn-primary" onClick={sendPrompt}>Generate Business Plan!</button>
       </form>
+      <div className='bg-secondary'>
+        <p>{prompt}</p>
+      </div>
+      
+      {loading && <div className='loading'>
+          <h1>Loading, please wait...</h1>
+      </div>}
+      <div className='bg-success'>
+        <ReactMarkdown>{businessPlan.businessPlan}</ReactMarkdown>
+      </div>
+      <div className='bg-info'>
+        <ReactMarkdown>{businessPlan.pitch}</ReactMarkdown>
+      </div>
     </div>
   );
 }
