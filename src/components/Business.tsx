@@ -1,10 +1,12 @@
 import React, { useState , FC } from 'react';
 // import DatePicker from "react-datepicker";
 // import "react-datepicker/dist/react-datepicker.css";
+
 import { Product } from './Product';
 import { Employee } from './Employee';
 import { Description } from './Description';
 import ReactMarkdown from 'react-markdown'
+const { REACT_APP_APIURL } = process.env;
 
 type Prod = {
   id: number;
@@ -184,7 +186,7 @@ export const Business: FC = () => {
     setLoading(true);
     const prompt = `
     Generate key value pairs that will be used to create a unique business plan for a successful company. Fill in [MASK] with the most probable option. Anything in () is a list of possible options for the value in that key value pair. Anything in <> is a type description for the value in that key value pair. 
-    Fill in the following key value pairs if information is missing using what is already filled in: 
+    Fill in the following key value pairs : 
     {"companyName": ${(name ? name : "[MASK]")}, 
     "industry": ${(industry === 'Other' ? otherIndustry : (industry ? industry : "[MASK]"))}(Arts & Entertainment, Automotive, Bar & Nightclub, Beauty/Hair Salon & Day Spa, Business Services, Construction & Engineering, Consulting, Consumer Services, Day Care Services & Children's Products, Education & Training, Farm & Food Production, Fashion/Décor, Finance/Insurance, Fitness & Sports, Hotel & Bed and Breakfast, Information Technology, Manufacturing, Medical & Health Care, Non Profit, Pet Services & Pet Supllies, Real Estate, Retail or Online Store, Restaurant, Cafe & Bakery, Transportation, Wedding & Event Planning, Wholesale & Distributor), 
     "amountOfFunding": ${(funding ? funding : "[MASK]")}, 
@@ -200,7 +202,7 @@ export const Business: FC = () => {
     `;
     setPrompt(prompt);
     try {
-        const request = await fetch("http://localhost:5000/api/prompt", {
+        const request = await fetch(REACT_APP_APIURL as string, {
             method: "POST",
             body: JSON.stringify({
                 prompt,
