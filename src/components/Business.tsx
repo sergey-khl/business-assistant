@@ -202,7 +202,7 @@ export const Business: FC = () => {
     `;
     setPrompt(prompt);
     try {
-        const request = await fetch("http://172.21.224.1:8080/api/prompt" as string, {
+        const request = await fetch("http://172.21.224.1:8080/api/prompt", {
             method: "POST",
             body: JSON.stringify({
                 prompt,
