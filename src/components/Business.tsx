@@ -184,7 +184,7 @@ export const Business: FC = () => {
     setLoading(true);
     const prompt = `
     Generate key value pairs that will be used to create a unique business plan for a successful company. Fill in [MASK] with the most probable option. Anything in () is a list of possible options for the value in that key value pair. Anything in <> is a type description for the value in that key value pair. 
-    Fill in the following key value pairs if information is missing: 
+    Fill in the following key value pairs if information is missing using what is already filled in: 
     {"companyName": ${(name ? name : "[MASK]")}, 
     "industry": ${(industry === 'Other' ? otherIndustry : (industry ? industry : "[MASK]"))}(Arts & Entertainment, Automotive, Bar & Nightclub, Beauty/Hair Salon & Day Spa, Business Services, Construction & Engineering, Consulting, Consumer Services, Day Care Services & Children's Products, Education & Training, Farm & Food Production, Fashion/Décor, Finance/Insurance, Fitness & Sports, Hotel & Bed and Breakfast, Information Technology, Manufacturing, Medical & Health Care, Non Profit, Pet Services & Pet Supllies, Real Estate, Retail or Online Store, Restaurant, Cafe & Bakery, Transportation, Wedding & Event Planning, Wholesale & Distributor), 
     "amountOfFunding": ${(funding ? funding : "[MASK]")}, 
@@ -346,40 +346,40 @@ export const Business: FC = () => {
               <h3>How Will You Market?</h3>
               <div className='form-group'>
                 <div className="form-check">
-                  <input className="form-check-input" type="checkbox" value="Content(Blogs, Videos, etc)" id="flexCheckDefault" onChange={handleMarket}/>
-                  <label className="form-check-label" htmlFor="flexCheckDefault">Content(Blogs, Videos, etc)</label>
+                  <input className="form-check-input" type="checkbox" value="Content(Blogs, Videos, etc)" id="content" onChange={handleMarket}/>
+                  <label className="form-check-label" htmlFor="content">Content(Blogs, Videos, etc)</label>
                 </div>
                 <div className="form-check">
-                  <input className="form-check-input" type="checkbox" value="Social Media" id="flexCheckDefault" onChange={handleMarket}/>
-                  <label className="form-check-label" htmlFor="flexCheckDefault">Social Media</label>
+                  <input className="form-check-input" type="checkbox" value="Social Media" id="social" onChange={handleMarket}/>
+                  <label className="form-check-label" htmlFor="social">Social Media</label>
                 </div>
                 <div className="form-check">
-                  <input className="form-check-input" type="checkbox" value="Search Engine(SEO, PPC, SEM)" id="flexCheckDefault" onChange={handleMarket}/>
-                  <label className="form-check-label" htmlFor="flexCheckDefault">Search Engine(SEO, PPC, SEM)</label>
+                  <input className="form-check-input" type="checkbox" value="Search Engine(SEO, PPC, SEM)" id="seo" onChange={handleMarket}/>
+                  <label className="form-check-label" htmlFor="seo">Search Engine(SEO, PPC, SEM)</label>
                 </div>
                 <div className="form-check">
-                  <input className="form-check-input" type="checkbox" value="Public Relations" id="flexCheckDefault" onChange={handleMarket}/>
-                  <label className="form-check-label" htmlFor="flexCheckDefault">Public Relations</label>
+                  <input className="form-check-input" type="checkbox" value="Public Relations" id="pr" onChange={handleMarket}/>
+                  <label className="form-check-label" htmlFor="pr">Public Relations</label>
                 </div>
                 <div className="form-check">
-                  <input className="form-check-input" type="checkbox" value="Print(Newspapers, Magazines, etc)" id="flexCheckDefault" onChange={handleMarket}/>
-                  <label className="form-check-label" htmlFor="flexCheckDefault">Print(Newspapers, Magazines, etc)</label>
+                  <input className="form-check-input" type="checkbox" value="Print(Newspapers, Magazines, etc)" id="print" onChange={handleMarket}/>
+                  <label className="form-check-label" htmlFor="print">Print(Newspapers, Magazines, etc)</label>
                 </div>
                 <div className="form-check">
-                  <input className="form-check-input" type="checkbox" value="Direct Mail" id="flexCheckDefault" onChange={handleMarket}/>
-                  <label className="form-check-label" htmlFor="flexCheckDefault">Direct Mail</label>
+                  <input className="form-check-input" type="checkbox" value="Direct Mail" id="direct" onChange={handleMarket}/>
+                  <label className="form-check-label" htmlFor="direct">Direct Mail</label>
                 </div>
                 <div className="form-check">
-                  <input className="form-check-input" type="checkbox" value="Email" id="flexCheckDefault" onChange={handleMarket}/>
-                  <label className="form-check-label" htmlFor="flexCheckDefault">Email</label>
+                  <input className="form-check-input" type="checkbox" value="Email" id="email" onChange={handleMarket}/>
+                  <label className="form-check-label" htmlFor="email">Email</label>
                 </div>
                 <div className="form-check">
-                  <input className="form-check-input" type="checkbox" value="Television & Radio" id="flexCheckDefault" onChange={handleMarket}/>
-                  <label className="form-check-label" htmlFor="flexCheckDefault">Television & Radio</label>
+                  <input className="form-check-input" type="checkbox" value="Television & Radio" id="tv" onChange={handleMarket}/>
+                  <label className="form-check-label" htmlFor="tv">Television & Radio</label>
                 </div>
                 <div className="form-check">
-                  <input className="form-check-input" type="checkbox" value="Other" id="flexCheckDefault" onChange={handleMarket}/>
-                  <label className="form-check-label" htmlFor="flexCheckDefault">Other</label>
+                  <input className="form-check-input" type="checkbox" value="Other" id="other" onChange={handleMarket}/>
+                  <label className="form-check-label" htmlFor="other">Other</label>
                 </div>
               </div>
             </div>
